@@ -36,10 +36,12 @@ namespace osuCrypto {
         Channel(const Channel& copy);
         Channel(Channel&& move) = default;
 
-        // Special constructor used to construct a Channel from some socket.
+        // Special constructors used to construct a Channel from some socket.
         // Note, Channel takes ownership of the socket and will delete it
         // when done.
         Channel(IOService& ios, SocketInterface* sock);
+        Channel(IOService& ios, SocketInterface* sock, 
+            std::string localName, std::string remoteName);
 
         ~Channel();
 
@@ -491,6 +493,8 @@ namespace osuCrypto {
     public:
         ChannelBase(Session& endpoint, std::string localName, std::string remoteName);
         ChannelBase(IOService& ios, SocketInterface* sock);
+        ChannelBase(IOService& ios, SocketInterface* sock, 
+            std::string localName, std::string remoteName);
         ~ChannelBase();
         
         IOService& mIos;

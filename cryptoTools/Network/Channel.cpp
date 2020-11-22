@@ -73,6 +73,12 @@ namespace osuCrypto {
         mBase.reset(new ChannelBase(ios, sock));
     }
 
+    Channel::Channel(IOService& ios, SocketInterface* sock, std::string localName, std::string remoteName)
+    {
+        sock->setIOService(ios);
+        mBase.reset(new ChannelBase(ios, sock, localName, remoteName));
+    }
+
 
     ChannelBase::ChannelBase(
         Session& endpoint,
@@ -95,7 +101,22 @@ namespace osuCrypto {
     ChannelBase::ChannelBase(IOService& ios, SocketInterface* sock)
         :
         mIos(ios),
+        mWork(ios, "Channel: SocketInterface." + std::to_string((u64)sock) ),     
+        mChannelRefCount(1),
+        mHandle(sock),
+        mStrand(ios.mIoService.get_executor())
+    {
+        //std::lock_guard<std::mutex> lock(mIos.mWorkerMtx);
+        //mIos.mChannels.insert(this);
+    }
+
+    ChannelBase::ChannelBase(IOService& ios, SocketInterface* sock, 
+        std::string localName, std::string remoteName)
+        :
+        mIos(ios),
         mWork(ios, "Channel: SocketInterface." + std::to_string((u64)sock) ),
+        mRemoteName(remoteName),
+        mLocalName(localName),        
         mChannelRefCount(1),
         mHandle(sock),
         mStrand(ios.mIoService.get_executor())

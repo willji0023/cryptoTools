@@ -26,18 +26,22 @@ class NetIO: public IOChannel<NetIO> { public:
 	char * buffer = nullptr;
 	bool has_sent = false;
 	string addr;
-	int port;
-	NetIO(const char * address, int port, bool quiet = false) {
+	unsigned int port;
+	NetIO(const char * address, unsigned int port, bool quiet = false) {
+    	std::cout << "Netio Object Creation" << std::endl;// TODO: remove
 		this->port = port & 0xFFFF;
 		is_server = (address == nullptr);
 		if (address == nullptr) {
+			std::cout << "Server: Creation" << std::endl;// TODO: remove
 			struct sockaddr_in dest;
 			struct sockaddr_in serv;
 			socklen_t socksize = sizeof(struct sockaddr_in);
 			memset(&serv, 0, sizeof(serv));
 			serv.sin_family = AF_INET;
 			serv.sin_addr.s_addr = htonl(INADDR_ANY); /* set our address to any interface */
-			serv.sin_port = htons(port);           /* set the server port number */    
+			std::cout << "Server: Set to any address: " << serv.sin_addr.s_addr << std::endl;
+			serv.sin_port = htons(port);           /* set the server port number */  
+            std::cout << "Server: Set to server port " << serv.sin_port<< std::endl;// TODO: remove  
 			mysocket = socket(AF_INET, SOCK_STREAM, 0);
 			int reuse = 1;
 			setsockopt(mysocket, SOL_SOCKET, SO_REUSEADDR, (const char*)&reuse, sizeof(reuse));
@@ -49,22 +53,29 @@ class NetIO: public IOChannel<NetIO> { public:
 				perror("error: listen");
 				exit(1);
 			}
+			std::cout << "Server: Socket made" << std::endl;// TODO: remove  
 			consocket = accept(mysocket, (struct sockaddr *)&dest, &socksize);
+			std::cout << "Server: Socket connection made with client." << std::endl;// TODO: remove  
 			close(mysocket);
 		}
 		else {
+            std::cout << "Client: Creation" << std::endl;// TODO: remove
 			addr = string(address);
 			
 			struct sockaddr_in dest;
 			memset(&dest, 0, sizeof(dest));
 			dest.sin_family = AF_INET;
 			dest.sin_addr.s_addr = inet_addr(address);
+	        std::cout << "Client: Set to address " << dest.sin_addr.s_addr << std::endl;// TODO: remove
 			dest.sin_port = htons(port);
+	        std::cout << "Client: Set to port " << dest.sin_port << std::endl;// TODO: remove
 
 			while(1) {
 				consocket = socket(AF_INET, SOCK_STREAM, 0);
-
+				// std::cout << "Client: Waiting for connection..." << std::endl;
+				
 				if (connect(consocket, (struct sockaddr *)&dest, sizeof(struct sockaddr)) == 0) {
+					std::cout << "Socket connection made with server" << std::endl;// TODO: remove  
 					break;
 				}
 				
@@ -73,8 +84,11 @@ class NetIO: public IOChannel<NetIO> { public:
 			}
 		}
 		set_nodelay();
+		std::cout << "No delay set" << std::endl;// TODO: remove  
+		std::cout << "Consocket: " << consocket << std::endl; // TODO: remove
 		stream = fdopen(consocket, "wb+");
 		buffer = new char[NETWORK_BUFFER_SIZE];
+		std::cout << "Buffer initialized" << std::endl;// TODO: remove  
 		memset(buffer, 0, NETWORK_BUFFER_SIZE);
 		setvbuf(stream, buffer, _IOFBF, NETWORK_BUFFER_SIZE);
 		if(!quiet)
@@ -115,6 +129,7 @@ class NetIO: public IOChannel<NetIO> { public:
 
 	void send_data_internal(const void * data, int len) {
 		int sent = 0;
+		std::cout << "Called send_data_internal"  << std::endl;
 		while(sent < len) {
 			int res = fwrite(sent + (char*)data, 1, len - sent, stream);
 			if (res >= 0)
@@ -130,8 +145,11 @@ class NetIO: public IOChannel<NetIO> { public:
 			fflush(stream);
 		has_sent = false;
 		int sent = 0;
+		std::cout << "sent: " << sent << " len: " << len << std::endl;
+		std::cout << "data: " << data << std::endl;
 		while(sent < len) {
 			int res = fread(sent + (char*)data, 1, len - sent, stream);
+			std::cout << "sent: " << sent << " len: " << len << " res: " << res << std::endl; // TODO: DEBU	G
 			if (res >= 0)
 				sent += res;
 			else 
@@ -144,6 +162,11 @@ class NetIO: public IOChannel<NetIO> { public:
 	}
 
 	void recv(unsigned char* data, uint64_t size) {
+		if (is_server) {
+			std::cout << "Netio server recv called" << std::endl; // TODO: remove
+		} else {
+			std::cout << "Netio client recv called" << std::endl; // TODO: remove
+		}
 		recv_data(data, size);
 	}
 

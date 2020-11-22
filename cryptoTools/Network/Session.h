@@ -5,6 +5,8 @@
 
 #include "cryptoTools/Common/Defines.h"
 #include <cryptoTools/Network/Channel.h>
+#include <cryptoTools/Network/NetIO.h>
+#include "emp-tool/utils/constants.h"
 
 #include <string>
 #include <list>
@@ -26,7 +28,6 @@ namespace osuCrypto {
     class Session
     {
     public:
-
 		// Start a session for the given IP and port in either Client or Server mode.
 		// The server should use their local address on which the socket should bind.
 		// The client should use the address of the server.
@@ -68,7 +69,10 @@ namespace osuCrypto {
 
 		IOService& getIOService();
 
+		emp::NetIO& getNetIO();
+
         // Adds a new channel (data pipe) between this endpoint and the remote. The channel is named at each end.
+		// party needed due to NetIO limitations
         Channel addChannel(std::string localName = "", std::string remoteName = "");
 
         // Stops this Session.
@@ -108,7 +112,7 @@ namespace osuCrypto {
 		bool mStopped = true;
 		IOService* mIOService = nullptr;
 		Acceptor* mAcceptor = nullptr;
-
+		emp::NetIO* mNetIO = nullptr;
 
 		std::atomic<u32> mRealRefCount;
 

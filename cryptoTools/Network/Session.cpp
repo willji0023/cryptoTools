@@ -69,15 +69,20 @@ namespace osuCrypto {
         mBase->mTLSContext = tls;
         mBase->mName = (name);
 
+        std::cout << "Normal session creation complete" << std::endl;// TODO: remove
 
         if (type == SessionMode::Server)
         {
-            ioService.aquireAcceptor(mBase);
+            // ioService.aquireAcceptor(mBase);
+			mBase->mNetIO = new emp::NetIO(nullptr, mBase->mPort, true);
+			std::cout << "Netio creation complete" << std::endl;// TODO: remove
         }
         else
         {
 			PRNG prng(ioService.getRandom(), sizeof(block) + sizeof(u64));
 			mBase->mSessionID = prng.get();
+			mBase->mNetIO = new emp::NetIO(IP().c_str(), mBase->mPort, true);
+			std::cout << "Netio creation complete" << std::endl;// TODO: remove
 #ifdef ENABLE_WOLFSSL
 			mBase->mTLSSessionID = prng.get();
 #endif
@@ -85,6 +90,7 @@ namespace osuCrypto {
             boost::asio::ip::tcp::resolver::query query(mBase->mIP, boost::lexical_cast<std::string>(port));
             mBase->mRemoteAddr = *resolver.resolve(query);
         }
+        std::cout << "Set Netio to not delay" << std::endl;// TODO: remove
     }
 
 	// See start(...)
@@ -159,6 +165,12 @@ namespace osuCrypto {
 			throw std::runtime_error(LOCATION);
 	}
 
+	emp::NetIO & Session::getNetIO() {
+		if (mBase)
+			return *mBase->mNetIO;
+		else
+			throw std::runtime_error(LOCATION);
+	}
 
 	Channel Session::addChannel(std::string localName, std::string remoteName)
 	{
@@ -173,15 +185,16 @@ namespace osuCrypto {
 			localName = "_autoName_" + std::to_string(mBase->mAnonymousChannelIdx++);
 		}
 
-
 		// make the remote name match the local name if empty
 		if (remoteName == "") remoteName = localName;
 
 		if (mBase->mStopped == true) throw std::runtime_error("rt error at " LOCATION);
 
-
-		// construct the basic channel. Has no socket.
-		Channel chl(*this, localName, remoteName);
+		// construct the basic channel using the NetIO socket.
+		std::cout << "Making new channel" << std::endl;// TODO: remove  
+		Channel chl{getIOService(), new SocketAdapter<emp::NetIO>(getNetIO()), localName, remoteName};
+		// Channel chl{*this, localName, remoteName};
+		std::cout << "New channel made" << std::endl;// TODO: remove  
 		return (chl);
 	}
 
