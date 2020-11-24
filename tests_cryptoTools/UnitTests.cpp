@@ -13,13 +13,14 @@
 
 #include "tests_cryptoTools/WolfSSL_Tests.h"
 
+#include "tests_cryptoTools/NetIO_Tests.h"
+
 #include <cryptoTools/Common/config.h>
 using namespace osuCrypto;
 
 namespace tests_cryptoTools
 {
     TestCollection Tests([](TestCollection& th) {
-
         th.add("BtNetwork_SBO_ptr_test                  ", SBO_ptr_test);
         th.add("BtNetwork_Connect1_Test                 ", BtNetwork_Connect1_Test);
         th.add("BtNetwork_RapidConnect_Test             ", BtNetwork_RapidConnect_Test);

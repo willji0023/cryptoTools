@@ -471,32 +471,24 @@ namespace tests_cryptoTools
 
                 Session endpoint(ioService, "127.0.0.1", 1212, SessionMode::Client, tls, "endpoint");
                 chl1 = endpoint.addChannel(channelName, channelName);
-                std::cout << "Test: client creation complete" << std::endl;// TODO: remove
 
-                //std::string recvMsg;
-                //chl1.recv(recvMsg);
-                //std::cout << "Test: client received a message" << std::endl;
+                std::string recvMsg;
+                chl1.recv(recvMsg);
 
-                //if (recvMsg != msg) throw UnitTestFail();
+                if (recvMsg != msg) throw UnitTestFail();
 
-                //chl1.asyncSend(std::move(recvMsg));
-                chl1.asyncSend(msg); // TODO: remove
-                //std::cout << "Test: client sent message back" << std::endl;
+                chl1.asyncSend(std::move(recvMsg));
                 chl1.close();
             });
 
         try {
             Session endpoint(ioService, "127.0.0.1", 1212, SessionMode::Server, tls, "endpoint");
             chl2 = endpoint.addChannel(channelName, channelName);
-            std::cout << "Test: Server creation complete" << std::endl;// TODO: remove
 
-            //chl2.asyncSend(msg);
-            //std::cout << "Test: server sent message" << std::endl;// TODO: remove
+            chl2.asyncSend(msg);
 
             std::string clientRecv;
-            std::cout << "original data: " << &clientRecv << std::endl;
             chl2.recv(clientRecv);
-            std::cout << "Test: server recieved message back" << std::endl;// TODO: remove
 
             if (clientRecv != msg)
                 throw UnitTestFail();
