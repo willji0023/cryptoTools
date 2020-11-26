@@ -5,14 +5,7 @@
 /* #undef ENABLE_MIRACL */
 
 // use the relic library for curves
-<<<<<<< HEAD
 #define ENABLE_RELIC ON 
-||||||| parent of 3d526e4... Add emp-tools
-/* #undef ENABLE_RELIC */
-#define ENABLE_RELIC ON
-=======
-/* #undef ENABLE_RELIC */
->>>>>>> 3d526e4... Add emp-tools
 
 // compile the circuit library
 /* #undef ENABLE_CIRCUITS */

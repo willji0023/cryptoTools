@@ -21,7 +21,14 @@ using namespace osuCrypto;
 namespace tests_cryptoTools
 {
     TestCollection Tests([](TestCollection& th) {
-        th.add("BtNetwork_SBO_ptr_test                  ", SBO_ptr_test);
+        th.add("NetIO_Connect1_Test                     ", NetIO_Connect1_Test);
+        th.add("NetIO_AnonymousMode_Test                ", NetIO_AnonymousMode_Test);
+        th.add("NetIO_ServerMode_Test                   ", NetIO_ServerMode_Test);
+        th.add("NetIO_Shutdown_Test                     ", NetIO_Shutdown_Test);
+        th.add("NetIO_OneMegabyteSend_Test              ", NetIO_OneMegabyteSend_Test);
+        th.add("NetIO_std_Containers_Test               ", NetIO_std_Containers_Test);
+        th.add("NetIO_bitVector_Test                    ", NetIO_bitVector_Test);
+        /*th.add("BtNetwork_SBO_ptr_test                  ", SBO_ptr_test);
         th.add("BtNetwork_Connect1_Test                 ", BtNetwork_Connect1_Test);
         th.add("BtNetwork_RapidConnect_Test             ", BtNetwork_RapidConnect_Test);
         th.add("BtNetwork_shutdown_test                 ", BtNetwork_shutdown_test);
@@ -70,7 +77,7 @@ namespace tests_cryptoTools
         th.add("EccpNumber_Test                         ", EccpNumber_Test);
         th.add("EccpPoint_Test                          ", EccpPoint_Test);
         th.add("REccpNumber_Test                        ", REccpNumber_Test);
-        th.add("REccpPoint_Test                         ", REccpPoint_Test);
+        th.add("REccpPoint_Test                         ", REccpPoint_Test);*/
 
 
 #ifdef ENABLE_CIRCUITS

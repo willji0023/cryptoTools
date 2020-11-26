@@ -72,7 +72,6 @@ namespace osuCrypto {
 		emp::NetIO& getNetIO();
 
         // Adds a new channel (data pipe) between this endpoint and the remote. The channel is named at each end.
-		// party needed due to NetIO limitations
         Channel addChannel(std::string localName = "", std::string remoteName = "");
 
         // Stops this Session.
