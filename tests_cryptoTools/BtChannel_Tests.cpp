@@ -577,7 +577,7 @@ namespace tests_cryptoTools
 
 
     //OSU_CRYPTO_ADD_TEST(globalTests, BtNetwork_OneMegabyteSend_Test);
-    void BtNetwork_OneMegabyteSend_Test(const CLP& cmd)
+    void NetIO_OneMegabyteSend_Test(const CLP& cmd)
     {
         setThreadName("Test_Host");
         auto tls = getIfTLS(cmd);

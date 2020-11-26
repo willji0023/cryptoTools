@@ -27,6 +27,7 @@ class NetIO: public IOChannel<NetIO> { public:
 	bool has_sent = false;
 	string addr;
 	unsigned int port;
+	bool canceled = false;
 	NetIO(const char * address, unsigned int port, bool quiet = false) {
 		this->port = port & 0xFFFF;
 		is_server = (address == nullptr);
@@ -133,14 +134,21 @@ class NetIO: public IOChannel<NetIO> { public:
 	}
 
 	void send(const unsigned char* data, uint64_t size) {
+		if (canceled)
+			return;
 		send_data(data, size);
 	}
 
 	void recv(unsigned char* data, uint64_t size) {
+		if (canceled)
+			return;
 		recv_data(data, size);
 	}
 
-	void asyncCancel(std::function<void()> completionHandle) {}
+	void asyncCancel(std::function<void()> completionHandle) {
+        canceled = true;
+        completionHandle();
+	}
 };
 }  // namespace emp
 #endif  //NETWORK_IO_CHANNEL
